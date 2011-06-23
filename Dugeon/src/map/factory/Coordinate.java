@@ -1,6 +1,6 @@
 package map.factory;
 
-public class Coordinate {
+public class Coordinate implements Comparable<Coordinate>{
 
     /**
      * char[x][y]
@@ -61,6 +61,18 @@ public class Coordinate {
         hash = 97 * hash + this.x;
         hash = 97 * hash + this.y;
         return hash;
+    }
+
+    public int compareTo(Coordinate o) {
+        if(x != o.x){
+            return x - o.x;
+        }
+        
+        if(y != o.y){
+            return y - o.y;
+        }
+
+        return 0;
     }
 
 

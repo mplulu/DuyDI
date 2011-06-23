@@ -27,10 +27,9 @@ public class MainConsole extends JPanel {
     private static final Color DEFAULT_BACKGROUND = Color.BLACK;
     private static final Font DEFAULT_FONT = new Font("Courier New", Font.PLAIN, 20);
     private static final int HEIGHT_OFFSET = 7;
-    private static CharacterResources re=new CharacterResources();
-
+    private static CharacterResources re = new CharacterResources();
     private MapView map;
-    
+
     public MainConsole() {
         setPreferredSize(new Dimension(300, 300));
     }
@@ -61,8 +60,16 @@ public class MainConsole extends JPanel {
             int x = fontWidth * (p.getCoordinate().getX() + 1);
             int y = fontHeight * (p.getCoordinate().getY() + 1);
             if (p != null) {
-                char c = re.getCharFor(p.getObject().getClass().getName());
-                g.setColor(((Item)p.getObject()).getColor());
+                String c;
+                //Test
+                if (p.getObject() instanceof Integer) {
+                    c = "" + ((Integer) p.getObject()).intValue();
+                    g.setColor(Color.YELLOW);
+                } else {
+                    c = "" + re.getCharFor(p.getObject().getClass().getName());
+                    g.setColor(((Item) p.getObject()).getColor());
+                }
+
                 g.drawString(String.valueOf(c), x, y);
             }
         }
