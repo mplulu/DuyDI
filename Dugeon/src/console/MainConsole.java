@@ -59,18 +59,11 @@ public class MainConsole extends JPanel {
         for (Pixel p : pixels) {
             int x = fontWidth * (p.getCoordinate().getX() + 1);
             int y = fontHeight * (p.getCoordinate().getY() + 1);
-            if (p != null) {
-                String c;
-                //Test
-                if (p.getObject() instanceof Integer) {
-                    c = "" + ((Integer) p.getObject()).intValue();
-                    g.setColor(Color.YELLOW);
-                } else {
-                    c = "" + re.getCharFor(p.getObject().getClass().getName());
-                    g.setColor(((Item) p.getObject()).getColor());
-                }
-
-                g.drawString(String.valueOf(c), x, y);
+            if (p != null && !p.isEmpty()) {
+                Item i = (Item) p.getObject();
+                String s = "" + re.getCharFor(i.getClass().getName());
+                g.setColor(i.getColor());
+                g.drawString(s, x, y);
             }
         }
     }

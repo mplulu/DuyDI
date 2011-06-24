@@ -1,7 +1,5 @@
 package map.factory;
 
-import java.awt.Color;
-
 public class Pixel {
 
     private Coordinate coordinate;
@@ -11,8 +9,6 @@ public class Pixel {
         this.coordinate = coordinate;
         this.object = object;
     }
-
-
 
     public Coordinate getCoordinate() {
         return coordinate;
@@ -28,5 +24,9 @@ public class Pixel {
 
     public void setObject(Object object) {
         this.object = object;
+    }
+
+    public boolean isEmpty() {
+        return object == null;
     }
 }
