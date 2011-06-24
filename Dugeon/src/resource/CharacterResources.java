@@ -21,7 +21,7 @@ public class CharacterResources {
     private static final Map<String, Character> objectsCharsMap= new TreeMap<String,Character>();
 
     static{
-        objectsCharsMap.put(Wall.class.getName(), '=');
+        objectsCharsMap.put(Wall.class.getName(), '\u2588');
         objectsCharsMap.put(Door.class.getName(), 'U');
         objectsCharsMap.put(Player.class.getName(), '@');
         objectsCharsMap.put(Way.class.getName(), '.');

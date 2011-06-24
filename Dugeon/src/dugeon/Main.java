@@ -156,6 +156,142 @@ public class Main {
         return pixels;
     }
 
+    private static MapView generateShapeMap() {
+        Map<Coordinate, Pixel> pixels = new TreeMap<Coordinate, Pixel>();
+        int width = 20, height = 20, minSegmentLength = 2;
+
+        // Generate walls
+        List<Pixel> wall = generateShapeHorizontalWall(
+                new Coordinate(0, 0),
+                width,
+                minSegmentLength,
+                0,
+                height / 2);
+        Coordinate lastCoordinate = wall.get(wall.size() - 1).getCoordinate();
+        // Add to map
+        for (Pixel p : wall) {
+            pixels.put(p.getCoordinate(), p);
+        }
+        // Fill floor
+        fillFloorTopToBottom(pixels, wall, height - 1);
+
+        wall = generateShapeVerticalWall(
+                lastCoordinate,
+                height,
+                minSegmentLength,
+                width / 2,
+                width - 1);
+        lastCoordinate = wall.get(wall.size() - 1).getCoordinate();
+        // Add to map
+        for (Pixel p : wall) {
+            pixels.put(p.getCoordinate(), p);
+        }
+        // Fill floor
+        fillFloorRightToLeft(pixels, wall, 0);
+
+        wall = generateShapeVerticalWall(
+                new Coordinate(0, 1),
+                height,
+                minSegmentLength,
+                0,
+                width / 2);
+        Coordinate beginCoordinate = wall.get(wall.size() - 1).getCoordinate();
+        // Add to map
+        for (Pixel p : wall) {
+            pixels.put(p.getCoordinate(), p);
+        }
+        // Fill floor
+        fillFloorLeftToRight(pixels, wall, width - 1);
+
+        wall = generateShapeHorizontalWall(
+                beginCoordinate,
+                (lastCoordinate.getX() - beginCoordinate.getX()),
+                minSegmentLength,
+                lastCoordinate.getY() - 1,
+                height - 1);
+        // Add to map
+        for (Pixel p : wall) {
+            pixels.put(p.getCoordinate(), p);
+        }
+        // Fill floor
+        fillFloorBottomToTop(pixels, wall, 0);
+
+        MapView map = new MapView(pixels);
+        return map;
+    }
+
+    private static List<Pixel> generateShapeHorizontalWall(
+            Coordinate beginCoor,
+            int wallLength,
+            int minSegmentLength,
+            int minY,
+            int maxY) {
+
+        Random random = new Random();
+        List<Pixel> pixels = new ArrayList<Pixel>();
+
+        for (int x = beginCoor.getX(), y = beginCoor.getY(), segmentLenght = 0; x < wallLength; ++x, ++segmentLenght) {
+            pixels.add(
+                    new Pixel(
+                    new Coordinate(x, y), new Wall()));
+
+            if (segmentLenght >= minSegmentLength) {
+                segmentLenght = 0;
+                if (random.nextBoolean()) {
+                    int r = random.nextInt(3) - 1;
+                    y += r;
+
+                    if (y < minY) {
+                        y = minY;
+                    }
+
+                    if (y > maxY) {
+                        y = maxY;
+                    }
+                }
+            }
+        }
+
+        return pixels;
+    }
+
+    private static List<Pixel> generateShapeVerticalWall(
+            Coordinate beginCoor,
+            int wallLength,
+            int minSegmentLength,
+            int minX,
+            int maxX) {
+
+        Random random = new Random();
+        List<Pixel> pixels = new ArrayList<Pixel>();
+
+        for (int x = beginCoor.getX(), y = beginCoor.getY(), segmentLength = 0;
+                y < wallLength; ++y, ++segmentLength) {
+            pixels.add(
+                    new Pixel(
+                    new Coordinate(x, y), new Wall()));
+
+            if (segmentLength >= minSegmentLength) {
+                segmentLength = 0;
+                if (random.nextBoolean()) {
+                    int r = random.nextInt(3) - 1;
+                    x += r;
+
+
+                    if (x < minX) {
+                        x = minX;
+                    }
+
+                    if (x > maxX) {
+                        x = maxX;
+                    }
+                }
+            }
+        }
+
+        return pixels;
+    }
+
     private static void fillFloorTopToBottom(Map<Coordinate, Pixel> map, List<Pixel> walls, int maxY) {
         for (Pixel wall : walls) {
             Coordinate c = wall.getCoordinate();
@@ -221,7 +357,7 @@ public class Main {
             }
 
             p.setObject(new Integer(value));
-        }else{
+        } else {
             p = new Pixel(coor, new Integer(1));
             map.put(coor, p);
         }
