@@ -4,6 +4,8 @@
  */
 package dugeon;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import map.factory.Coordinate;
 import map.factory.MapView;
 import console.MainConsole;
@@ -14,28 +16,67 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
+import objects.Player;
 import objects.Wall;
 import objects.Way;
 
-/**
- *
- * @author hoanggia
- */
 public class Main {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
         MapView map = generateMap();
+        int randomPosition = new Random().nextInt(map.getWays().size());
+        Player player = new Player(map.getWays().get(randomPosition));
 
         JFrame frame = new JFrame();
-        MainConsole console = new MainConsole(map);
+        MainConsole console = new MainConsole(map, player);
 
         frame.add(console);
         frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        while (true) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            int random = new Random().nextInt(4);
+            switch (random) {
+                case 0:
+                    player.moveAhead();
+                    //Check
+                    if (map.getPixelsMap().get(player.getCoordinate()).getObject() instanceof Wall) {
+                        player.moveBack();
+                    }
+                    break;
+                case 1:
+                    player.moveBack();
+                    //Check
+                    if (map.getPixelsMap().get(player.getCoordinate()).getObject() instanceof Wall) {
+                        player.moveAhead();
+                    }
+                    break;
+                case 2:
+                    player.moveLeft();
+                    //Check
+                    if (map.getPixelsMap().get(player.getCoordinate()).getObject() instanceof Wall) {
+                        player.moveRight();
+                    }
+                    break;
+                case 3:
+                    player.moveRight();
+                    //Check
+                    if (map.getPixelsMap().get(player.getCoordinate()).getObject() instanceof Wall) {
+                        player.moveLeft();
+                    }
+            }
+
+            console.setPlayer(player);
+            console.revalidate();
+            console.repaint();
+        }
     }
 
     private static MapView generateMap() {
@@ -56,7 +97,7 @@ public class Main {
             pixels.put(p.getCoordinate(), p);
         }
         // Fill floor
-        detectFloorTopToBottom(pixels, minX, maxX, minY, maxY);
+        detectWaysTopToBottom(pixels, minX, maxX, minY, maxY);
 
         wall = generateVerticalWall(
                 lastCoordinate,
@@ -69,7 +110,7 @@ public class Main {
             pixels.put(p.getCoordinate(), p);
         }
         // Fill floor
-        detectFloorRightToLeft(pixels, minX, maxX, minY, maxY);
+        detectWaysRightToLeft(pixels, minX, maxX, minY, maxY);
 
         wall = generateVerticalWall(
                 new Coordinate(0, 1),
@@ -82,7 +123,7 @@ public class Main {
             pixels.put(p.getCoordinate(), p);
         }
         // Fill floor
-        detectFloorLeftToRight(pixels, minX, maxX, minY, maxY);
+        detectWaysLeftToRight(pixels, minX, maxX, minY, maxY);
 
         wall = generateHorizontalWall(
                 beginCoordinate,
@@ -94,10 +135,10 @@ public class Main {
             pixels.put(p.getCoordinate(), p);
         }
         // Fill floor
-        detectFloorBottomToTop(pixels, minX, maxX, minY, maxY);
+        detectWaysBottomToTop(pixels, minX, maxX, minY, maxY);
 
-        fillFloor(pixels, minX, maxX, minY, maxY);
-        MapView map = new MapView(pixels);
+        List<Coordinate> ways = fillWays(pixels, minX, maxX, minY, maxY);
+        MapView map = new MapView(pixels, ways);
         return map;
     }
 
@@ -177,7 +218,7 @@ public class Main {
             pixels.put(p.getCoordinate(), p);
         }
         // Fill floor
-        detectFloorTopToBottom(pixels, minX, maxX, minY, maxY);
+        detectWaysTopToBottom(pixels, minX, maxX, minY, maxY);
 
         wall = generateShapeVerticalWall(
                 lastCoordinate,
@@ -191,7 +232,7 @@ public class Main {
             pixels.put(p.getCoordinate(), p);
         }
         // Fill floor
-        detectFloorRightToLeft(pixels, minX, maxX, minY, maxY);
+        detectWaysRightToLeft(pixels, minX, maxX, minY, maxY);
 
         wall = generateShapeVerticalWall(
                 new Coordinate(0, 1),
@@ -205,7 +246,7 @@ public class Main {
             pixels.put(p.getCoordinate(), p);
         }
         // Fill floor
-        detectFloorLeftToRight(pixels, minX, maxX, minY, maxY);
+        detectWaysLeftToRight(pixels, minX, maxX, minY, maxY);
 
         wall = generateShapeHorizontalWall(
                 beginCoordinate,
@@ -218,11 +259,11 @@ public class Main {
             pixels.put(p.getCoordinate(), p);
         }
         // Fill floor
-        detectFloorBottomToTop(pixels, minX, maxX, minY, maxY);
+        detectWaysBottomToTop(pixels, minX, maxX, minY, maxY);
 
         // fill floors
-        fillFloor(pixels, minX, maxX, minY, maxY);
-        MapView map = new MapView(pixels);
+        List<Coordinate> ways = fillWays(pixels, minX, maxX, minY, maxY);
+        MapView map = new MapView(pixels, ways);
         return map;
     }
 
@@ -298,7 +339,7 @@ public class Main {
         return pixels;
     }
 
-    private static void detectFloorTopToBottom(
+    private static void detectWaysTopToBottom(
             Map<Coordinate, Pixel> map,
             int minX, int maxX,
             int minY, int maxY) {
@@ -314,14 +355,14 @@ public class Main {
                         gotWall = true;
                     }
                 } else {
-                    increaseFloorCounter(map, c);
+                    increaseWayCounter(map, c);
                 }
             }
             gotWall = false;
         }
     }
 
-    private static void detectFloorBottomToTop(
+    private static void detectWaysBottomToTop(
             Map<Coordinate, Pixel> map,
             int minX, int maxX,
             int minY, int maxY) {
@@ -337,14 +378,14 @@ public class Main {
                         gotWall = true;
                     }
                 } else {
-                    increaseFloorCounter(map, c);
+                    increaseWayCounter(map, c);
                 }
             }
             gotWall = false;
         }
     }
 
-    private static void detectFloorLeftToRight(
+    private static void detectWaysLeftToRight(
             Map<Coordinate, Pixel> map,
             int minX, int maxX,
             int minY, int maxY) {
@@ -360,14 +401,14 @@ public class Main {
                         gotWall = true;
                     }
                 } else {
-                    increaseFloorCounter(map, c);
+                    increaseWayCounter(map, c);
                 }
             }
             gotWall = false;
         }
     }
 
-    private static void detectFloorRightToLeft(
+    private static void detectWaysRightToLeft(
             Map<Coordinate, Pixel> map,
             int minX, int maxX,
             int minY, int maxY) {
@@ -383,14 +424,14 @@ public class Main {
                         gotWall = true;
                     }
                 } else {
-                    increaseFloorCounter(map, c);
+                    increaseWayCounter(map, c);
                 }
             }
             gotWall = false;
         }
     }
 
-    private static void increaseFloorCounter(Map<Coordinate, Pixel> map, Coordinate coor) {
+    private static void increaseWayCounter(Map<Coordinate, Pixel> map, Coordinate coor) {
         Pixel p = map.get(coor);
         if (p != null) {
             int value = 1;
@@ -412,11 +453,12 @@ public class Main {
         }
     }
 
-    private static void fillFloor(
+    private static List<Coordinate> fillWays(
             Map<Coordinate, Pixel> map,
             int minX, int maxX,
             int minY, int maxY) {
 
+        List<Coordinate> ways = new ArrayList<Coordinate>();
         for (int x = minX; x <= maxX; ++x) {
             for (int y = minY; y <= maxY; ++y) {
                 Coordinate c = new Coordinate(x, y);
@@ -427,6 +469,7 @@ public class Main {
 
                         if (i == 4) {
                             p.setObject(new Way());
+                            ways.add(c);
                         } else {
                             p.setObject(null);
                         }
@@ -436,5 +479,7 @@ public class Main {
                 }
             }
         }
+
+        return ways;
     }
 }

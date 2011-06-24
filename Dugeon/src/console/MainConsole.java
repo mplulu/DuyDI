@@ -13,8 +13,10 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import javax.swing.JPanel;
+import map.factory.Coordinate;
 import map.factory.Pixel;
 import objects.Item;
+import objects.Player;
 import resource.CharacterResources;
 
 /**
@@ -29,24 +31,30 @@ public class MainConsole extends JPanel {
     private static final int HEIGHT_OFFSET = 7;
     private static CharacterResources re = new CharacterResources();
     private MapView map;
+    private Player player;
 
     public MainConsole() {
         setPreferredSize(new Dimension(300, 300));
     }
 
-    public MainConsole(MapView map) {
+    public MainConsole(MapView map, Player player) {
         this();
         this.map = map;
+        this.player = player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     @Override
     public void paintComponent(Graphics g) {
         g.setColor(DEFAULT_BACKGROUND);
         g.fillRect(0, 0, getWidth(), getHeight());
-        drawMap(map, g);
+        drawMap(g, map, player);
     }
 
-    public static void drawMap(MapView map, Graphics g) {
+    public static void drawMap(Graphics g, MapView map, Player player) {
         g.setFont(DEFAULT_FONT);
 
         FontRenderContext fontRenderContext = new FontRenderContext(DEFAULT_FONT.getTransform(), false, false);
@@ -57,8 +65,9 @@ public class MainConsole extends JPanel {
         Collection<Pixel> pixels = map.getPixelsMap().values();
 
         for (Pixel p : pixels) {
-            int x = fontWidth * (p.getCoordinate().getX() + 1);
-            int y = fontHeight * (p.getCoordinate().getY() + 1);
+            Coordinate c = p.getCoordinate();
+            int x = fontWidth * (c.getX() + 1);
+            int y = fontHeight * (c.getY() + 1);
             if (p != null && !p.isEmpty()) {
                 Item i = (Item) p.getObject();
                 String s = "" + re.getCharFor(i.getClass().getName());
@@ -66,5 +75,12 @@ public class MainConsole extends JPanel {
                 g.drawString(s, x, y);
             }
         }
+
+        Coordinate c = player.getCoordinate();
+        int x = fontWidth * (c.getX() + 1);
+        int y = fontHeight * (c.getY() + 1);
+        String s = "" + re.getCharFor(Player.class.getName());
+        g.setColor(player.getColor());
+        g.drawString(s, x, y);
     }
 }

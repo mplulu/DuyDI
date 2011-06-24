@@ -4,8 +4,10 @@
  */
 package map.factory;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import map.component.MapComponent;
 
 /**
@@ -14,16 +16,18 @@ import map.component.MapComponent;
  */
 public class MapView {
 
-    private Map<Coordinate,Pixel> pixelsMap;
+    private Map<Coordinate, Pixel> pixelsMap;
+    private List<Coordinate> ways;
 
-    public MapView(Map<Coordinate,Pixel> pixelsMap) {
-        this.pixelsMap=pixelsMap;
+    public MapView(Map<Coordinate, Pixel> pixelsMap, List<Coordinate> ways) {
+        this.pixelsMap = pixelsMap;
+        this.ways = ways;
     }
 
-    public MapView(){
-        pixelsMap=new HashMap<Coordinate,Pixel>();
+    public MapView() {
+        pixelsMap = new TreeMap<Coordinate, Pixel>();
+        ways = new ArrayList<Coordinate>();
     }
-
 
     public Map<Coordinate, Pixel> getPixelsMap() {
         return pixelsMap;
@@ -33,17 +37,19 @@ public class MapView {
         this.pixelsMap = pixelsMap;
     }
 
-    
+    public List<Coordinate> getWays() {
+        return ways;
+    }
 
-    
+    public void setWays(List<Coordinate> ways) {
+        this.ways = ways;
+    }
 
-    
-
-    public boolean addMapComponent(MapComponent component,Coordinate coordinate){
-        if(component.getPixels()==null){
+    public boolean addMapComponent(MapComponent component, Coordinate coordinate) {
+        if (component.getPixels() == null) {
             return false;
         }
-        for(Pixel p:component.getPixels()){
+        for (Pixel p : component.getPixels()) {
             p.getCoordinate().shiftCoordinate(coordinate.getX(), coordinate.getY());
             pixelsMap.put(p.getCoordinate(), p);
         }
