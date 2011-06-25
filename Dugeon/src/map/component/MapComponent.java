@@ -5,7 +5,8 @@
 
 package map.component;
 
-import java.util.List;
+import java.util.Map;
+import map.factory.Coordinate;
 import map.factory.Pixel;
 
 /**
@@ -13,7 +14,10 @@ import map.factory.Pixel;
  * @author hoanggia
  */
 public interface MapComponent {
-    public abstract List<Pixel> getPixels();
+    public abstract Map<Coordinate,Pixel> getPixels();
+    public abstract Map<Coordinate,Pixel> getWays();
+    public abstract Map<Coordinate,Pixel> getWalls();
+    public abstract Map<Coordinate,Pixel> getOuterWalls();
 
 
 

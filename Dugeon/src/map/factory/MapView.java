@@ -5,6 +5,7 @@
 package map.factory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -17,11 +18,11 @@ import map.component.MapComponent;
 public class MapView {
 
     private Map<Coordinate, Pixel> pixelsMap;
-    private List<Coordinate> ways;
+    private Collection<Coordinate> ways;
 
-    public MapView(Map<Coordinate, Pixel> pixelsMap, List<Coordinate> ways) {
-        this.pixelsMap = pixelsMap;
-        this.ways = ways;
+    public MapView(MapComponent mapComponent) {
+        this.pixelsMap = mapComponent.getPixels();
+        this.ways = mapComponent.getWays().keySet();
     }
 
     public MapView() {
@@ -37,7 +38,7 @@ public class MapView {
         this.pixelsMap = pixelsMap;
     }
 
-    public List<Coordinate> getWays() {
+    public Collection<Coordinate> getWays() {
         return ways;
     }
 
@@ -49,7 +50,7 @@ public class MapView {
         if (component.getPixels() == null) {
             return false;
         }
-        for (Pixel p : component.getPixels()) {
+        for (Pixel p : component.getPixels().values()) {
             p.getCoordinate().shiftCoordinate(coordinate.getX(), coordinate.getY());
             pixelsMap.put(p.getCoordinate(), p);
         }

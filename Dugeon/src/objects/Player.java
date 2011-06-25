@@ -6,6 +6,7 @@ import map.factory.Coordinate;
 public class Player implements Item {
 
     private Coordinate coordinate;
+    private Coordinate previous;
 
     public Player(Coordinate coordinate) {
         this.coordinate = coordinate;
@@ -20,19 +21,31 @@ public class Player implements Item {
     }
 
     public void moveLeft() {
+        setPreviousCoordinate();
         coordinate.setX(coordinate.getX() - 1);
     }
 
     public void moveRight() {
+        setPreviousCoordinate();
         coordinate.setX(coordinate.getX() + 1);
     }
 
     public void moveAhead() {
+        setPreviousCoordinate();
         coordinate.setY(coordinate.getY() - 1);
     }
 
     public void moveBack() {
+        setPreviousCoordinate();
         coordinate.setY(coordinate.getY() + 1);
+    }
+
+    private  void setPreviousCoordinate(){
+        previous=new Coordinate(coordinate.getX(), coordinate.getY());
+    }
+
+    public void goBack(){
+        coordinate=new Coordinate(previous.getX(),previous.getY());
     }
 
     public char getRepresentChar() {
