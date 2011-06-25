@@ -38,48 +38,48 @@ public class Main {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        while (true) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            int random = new Random().nextInt(4);
-            switch (random) {
-                case 0:
-                    player.moveAhead();
-                    //Check
-                    if (map.getPixelsMap().get(player.getCoordinate()).getObject() instanceof Wall) {
-                        player.moveBack();
-                    }
-                    break;
-                case 1:
-                    player.moveBack();
-                    //Check
-                    if (map.getPixelsMap().get(player.getCoordinate()).getObject() instanceof Wall) {
-                        player.moveAhead();
-                    }
-                    break;
-                case 2:
-                    player.moveLeft();
-                    //Check
-                    if (map.getPixelsMap().get(player.getCoordinate()).getObject() instanceof Wall) {
-                        player.moveRight();
-                    }
-                    break;
-                case 3:
-                    player.moveRight();
-                    //Check
-                    if (map.getPixelsMap().get(player.getCoordinate()).getObject() instanceof Wall) {
-                        player.moveLeft();
-                    }
-            }
-
-            console.setPlayer(player);
-            console.revalidate();
-            console.repaint();
-        }
+//        while (true) {
+//            try {
+//                Thread.sleep(500);
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//
+//            int random = new Random().nextInt(4);
+//            switch (random) {
+//                case 0:
+//                    player.moveAhead();
+//                    //Check
+//                    if (map.getPixelsMap().get(player.getCoordinate()).getObject() instanceof Wall) {
+//                        player.moveBack();
+//                    }
+//                    break;
+//                case 1:
+//                    player.moveBack();
+//                    //Check
+//                    if (map.getPixelsMap().get(player.getCoordinate()).getObject() instanceof Wall) {
+//                        player.moveAhead();
+//                    }
+//                    break;
+//                case 2:
+//                    player.moveLeft();
+//                    //Check
+//                    if (map.getPixelsMap().get(player.getCoordinate()).getObject() instanceof Wall) {
+//                        player.moveRight();
+//                    }
+//                    break;
+//                case 3:
+//                    player.moveRight();
+//                    //Check
+//                    if (map.getPixelsMap().get(player.getCoordinate()).getObject() instanceof Wall) {
+//                        player.moveLeft();
+//                    }
+//            }
+//
+//            console.setPlayer(player);
+//            console.revalidate();
+//            console.repaint();
+//        }
     }
 
     private static MapView generateMap() {

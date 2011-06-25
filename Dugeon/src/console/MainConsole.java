@@ -4,14 +4,17 @@
  */
 package console;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import map.factory.MapView;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JPanel;
@@ -19,13 +22,14 @@ import map.factory.Coordinate;
 import map.factory.Pixel;
 import objects.Item;
 import objects.Player;
+import objects.Wall;
 import resource.CharacterResources;
 
 /**
  *
  * @author hoanggia
  */
-public class MainConsole extends JPanel {
+public class MainConsole extends JPanel implements KeyListener {
 
     private static final Color DEFAULT_FOREGROUND = Color.LIGHT_GRAY;
     private static final Color DEFAULT_BACKGROUND = Color.BLACK;
@@ -37,7 +41,10 @@ public class MainConsole extends JPanel {
     private Map<Coordinate, Pixel> pixels;
 
     public MainConsole() {
+        addKeyListener(this);
+        setFocusable(true);
         setPreferredSize(new Dimension(600, 600));
+        
     }
 
     public MainConsole(MapView map, Player player) {
@@ -45,11 +52,19 @@ public class MainConsole extends JPanel {
         this.map = map;
         this.player = player;
         pixels = new HashMap<Coordinate, Pixel>();
+        initPixelsMap();
+    }
+
+    private void initPixelsMap() {
+        pixels.clear();
+        pixels.putAll(map.getPixelsMap());
+        pixels.put(player.getCoordinate(), new Pixel(player.getCoordinate(), player));
 
     }
 
     public void setPlayer(Player player) {
         this.player = player;
+        initPixelsMap();
     }
 
     @Override
@@ -66,8 +81,7 @@ public class MainConsole extends JPanel {
         Rectangle2D bound = DEFAULT_FONT.getStringBounds(".", fontRenderContext);
         int fontWidth = (int) bound.getWidth();
         int fontHeight = (int) bound.getHeight();
-        pixels.putAll(map.getPixelsMap());
-        pixels.put(player.getCoordinate(), new Pixel(player.getCoordinate(), player));
+        
         System.out.println("e");
         for (Pixel p : pixels.values()) {
             Coordinate c = p.getCoordinate();
@@ -83,4 +97,52 @@ public class MainConsole extends JPanel {
 
 
     }
+
+    public void keyTyped(KeyEvent e) {
+    }
+
+    public void keyPressed(KeyEvent e) {
+    }
+
+    public void keyReleased(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP:
+                player.moveAhead();
+                //Check
+                if (pixels.get(player.getCoordinate()).getObject() instanceof Wall) {
+                    player.moveBack();
+                }
+                break;
+            case KeyEvent.VK_DOWN:
+                player.moveBack();
+                //Check
+                if (pixels.get(player.getCoordinate()).getObject() instanceof Wall) {
+                    player.moveAhead();
+                }
+                break;
+            case KeyEvent.VK_LEFT:
+                player.moveLeft();
+                //Check
+                if (pixels.get(player.getCoordinate()).getObject() instanceof Wall) {
+                    player.moveRight();
+                }
+                break;
+            case KeyEvent.VK_RIGHT:
+                player.moveRight();
+                //Check
+                if (pixels.get(player.getCoordinate()).getObject() instanceof Wall) {
+                    player.moveLeft();
+                }
+        }
+
+        this.setPlayer(player);
+        if(pixels.get(player.getCoordinate()).getObject() instanceof Player ){
+//            System.out.println("player");
+        }
+
+        revalidate();
+        repaint();
+    }
+
+
 }
