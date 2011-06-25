@@ -12,6 +12,8 @@ import java.awt.Graphics;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JPanel;
 import map.factory.Coordinate;
 import map.factory.Pixel;
@@ -32,15 +34,18 @@ public class MainConsole extends JPanel {
     private static CharacterResources re = new CharacterResources();
     private MapView map;
     private Player player;
+    private Map<Coordinate, Pixel> pixels;
 
     public MainConsole() {
-        setPreferredSize(new Dimension(300, 300));
+        setPreferredSize(new Dimension(600, 600));
     }
 
     public MainConsole(MapView map, Player player) {
         this();
         this.map = map;
         this.player = player;
+        pixels = new HashMap<Coordinate, Pixel>();
+
     }
 
     public void setPlayer(Player player) {
@@ -54,17 +59,17 @@ public class MainConsole extends JPanel {
         drawMap(g, map, player);
     }
 
-    public static void drawMap(Graphics g, MapView map, Player player) {
+    public void drawMap(Graphics g, MapView map, Player player) {
         g.setFont(DEFAULT_FONT);
 
         FontRenderContext fontRenderContext = new FontRenderContext(DEFAULT_FONT.getTransform(), false, false);
         Rectangle2D bound = DEFAULT_FONT.getStringBounds(".", fontRenderContext);
         int fontWidth = (int) bound.getWidth();
-        int fontHeight = (int) bound.getHeight() - HEIGHT_OFFSET;
-
-        Collection<Pixel> pixels = map.getPixelsMap().values();
-
-        for (Pixel p : pixels) {
+        int fontHeight = (int) bound.getHeight();
+        pixels.putAll(map.getPixelsMap());
+        pixels.put(player.getCoordinate(), new Pixel(player.getCoordinate(), player));
+        System.out.println("e");
+        for (Pixel p : pixels.values()) {
             Coordinate c = p.getCoordinate();
             int x = fontWidth * (c.getX() + 1);
             int y = fontHeight * (c.getY() + 1);
@@ -76,11 +81,6 @@ public class MainConsole extends JPanel {
             }
         }
 
-        Coordinate c = player.getCoordinate();
-        int x = fontWidth * (c.getX() + 1);
-        int y = fontHeight * (c.getY() + 1);
-        String s = "" + re.getCharFor(Player.class.getName());
-        g.setColor(player.getColor());
-        g.drawString(s, x, y);
+
     }
 }

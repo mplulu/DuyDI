@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
+import maze.MazeGenerator;
 import objects.Player;
 import objects.Wall;
 import objects.Way;
@@ -23,7 +24,9 @@ import objects.Way;
 public class Main {
 
     public static void main(String[] args) {
-        MapView map = generateMap();
+        //MapView map = generateMap();
+        MazeGenerator maze=new MazeGenerator(21, 21);
+        MapView map=new MapView(maze.getPixels(),new ArrayList(maze.getWays().keySet()));
         int randomPosition = new Random().nextInt(map.getWays().size());
         Player player = new Player(map.getWays().get(randomPosition));
 
