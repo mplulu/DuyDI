@@ -1,9 +1,10 @@
-package objects;
+package model;
 
 import java.awt.Color;
-import map.factory.Coordinate;
+import model.Coordinate;
+import objects.ViewablePixel;
 
-public class Player implements Item {
+public class Player implements ViewablePixel {
 
     private Coordinate coordinate;
     private Coordinate previous;

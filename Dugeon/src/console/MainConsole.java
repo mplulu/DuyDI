@@ -16,12 +16,10 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JPanel;
-import map.factory.Coordinate;
-import map.factory.Pixel;
-import objects.Item;
-import objects.Player;
+import model.Coordinate;
+import model.Player;
+import objects.ViewablePixel;
 import objects.Wall;
-import objects.Way;
 import resource.CharacterResources;
 
 /**
@@ -37,7 +35,7 @@ public class MainConsole extends JPanel implements KeyListener {
     private static CharacterResources re = new CharacterResources();
     private MapView map;
     private Player player;
-    private Map<Coordinate, Pixel> pixels;
+    private Map<Coordinate, ViewablePixel> pixels;
     Coordinate cp;
 
     public MainConsole() {
@@ -53,22 +51,22 @@ public class MainConsole extends JPanel implements KeyListener {
         this.player = player;
         cp = player.getCoordinate();
 
-        pixels = new HashMap<Coordinate, Pixel>();
-        initPixelsMap();
+        pixels = new HashMap<Coordinate, ViewablePixel>();
+        initViewablePixelsMap();
     }
 
-    private void initPixelsMap() {
+    private void initViewablePixelsMap() {
         pixels.clear();
-        pixels.putAll(map.getPixelsMap());
+        pixels.putAll(map.getViewablePixelsMap());
 
-        pixels.put(player.getCoordinate(), new Pixel(player.getCoordinate(), player));
+        pixels.put(player.getCoordinate(), new Player(player.getCoordinate()));
 
 
     }
 
     public void setPlayer(Player player) {
         this.player = player;
-        initPixelsMap();
+        initViewablePixelsMap();
     }
 
     @Override
@@ -86,14 +84,13 @@ public class MainConsole extends JPanel implements KeyListener {
         int fontWidth = (int) bound.getWidth();
         int fontHeight = (int) bound.getHeight();
 
-        for (Pixel p : pixels.values()) {
+        for (ViewablePixel p : pixels.values()) {
             Coordinate c = p.getCoordinate();
 
             int x = fontWidth * (c.getX() + 1);
             int y = fontHeight * (c.getY() + 1);
-            if (p != null && !p.isEmpty()) {
-
-                Item i = (Item) p.getObject();
+            if (p != null) {
+                ViewablePixel i = (ViewablePixel) p;
                 String s = "" + re.getCharFor(i.getClass().getName());
                 if (c.equals(cp)) {
 
@@ -131,11 +128,11 @@ public class MainConsole extends JPanel implements KeyListener {
                 player.moveRight();
                 break;
         }
-        if (pixels.get(player.getCoordinate()).getObject() instanceof Wall) {
+        if (pixels.get(player.getCoordinate()) instanceof Wall) {
             player.goBack();
         }
         this.setPlayer(player);
-        if (pixels.get(player.getCoordinate()).getObject() instanceof Player) {
+        if (pixels.get(player.getCoordinate()) instanceof Player) {
 //            System.out.println("player");
         }
         revalidate();

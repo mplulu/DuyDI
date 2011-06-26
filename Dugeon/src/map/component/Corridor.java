@@ -6,8 +6,8 @@ package map.component;
 
 import java.util.HashMap;
 import java.util.Map;
-import map.factory.Coordinate;
-import map.factory.Pixel;
+import model.Coordinate;
+import objects.ViewablePixel;
 import objects.Wall;
 import objects.Way;
 
@@ -17,39 +17,39 @@ import objects.Way;
  */
 public class Corridor implements MapComponent {
 
-    private Map<Coordinate,Pixel> pixels;
-    private Map<Coordinate,Pixel> wallPixels;
-    private Map<Coordinate,Pixel> wayPixels;
+    private Map<Coordinate,ViewablePixel> viewablePixels;
+    private Map<Coordinate,ViewablePixel> wallViewablePixels;
+    private Map<Coordinate,ViewablePixel> wayViewablePixels;
     private boolean isVectical;
 
     public Corridor(int length, int width, boolean isVectical) {
-        pixels=new HashMap<Coordinate,Pixel>();
-        wallPixels=new HashMap<Coordinate,Pixel>();
-        wayPixels=new HashMap<Coordinate,Pixel>();
+        viewablePixels=new HashMap<Coordinate,ViewablePixel>();
+        wallViewablePixels=new HashMap<Coordinate,ViewablePixel>();
+        wayViewablePixels=new HashMap<Coordinate,ViewablePixel>();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < length; j++) {
                 int x = isVectical ? i : j;
                 int y = isVectical ? j : i;
                 if (isVectical) {
                     if(x==0||x==width-1){
-                        Pixel p=new Pixel(new Coordinate(x, y), new Wall());
-                        pixels.put(p.getCoordinate(),p);
-                        wallPixels.put(p.getCoordinate(),p);
+                        ViewablePixel p=new Wall(new Coordinate(x, y));
+                        viewablePixels.put(p.getCoordinate(),p);
+                        wallViewablePixels.put(p.getCoordinate(),p);
                     }else{
-                        Pixel p=new Pixel(new Coordinate(x, y), new Way());
-                        pixels.put(p.getCoordinate(),p);
-                        wayPixels.put(p.getCoordinate(),p);
+                        ViewablePixel p=new Way(new Coordinate(x, y));
+                        viewablePixels.put(p.getCoordinate(),p);
+                        wayViewablePixels.put(p.getCoordinate(),p);
                     }
 
                 }else{
                     if(y==0||y==width-1){
-                        Pixel p=new Pixel(new Coordinate(x, y), new Wall());
-                        pixels.put(p.getCoordinate(),p);
-                        wallPixels.put(p.getCoordinate(),p);
+                        ViewablePixel p=new Wall(new Coordinate(x, y));
+                        viewablePixels.put(p.getCoordinate(),p);
+                        wallViewablePixels.put(p.getCoordinate(),p);
                     }else{
-                        Pixel p=new Pixel(new Coordinate(x, y), new Way());
-                        pixels.put(p.getCoordinate(),p);
-                        wayPixels.put(p.getCoordinate(),p);
+                        ViewablePixel p=new Way(new Coordinate(x, y));
+                        viewablePixels.put(p.getCoordinate(),p);
+                        wayViewablePixels.put(p.getCoordinate(),p);
 
                     }
                 }
@@ -58,19 +58,19 @@ public class Corridor implements MapComponent {
         }
     }
 
-    public Map<Coordinate,Pixel> getPixels() {
-        return pixels;
+    public Map<Coordinate,ViewablePixel> getViewablePixels() {
+        return viewablePixels;
     }
 
-    public Map<Coordinate, Pixel> getWays() {
-        return wayPixels;
+    public Map<Coordinate, ViewablePixel> getWays() {
+        return wayViewablePixels;
     }
 
-    public Map<Coordinate, Pixel> getWalls() {
-        return wallPixels;
+    public Map<Coordinate, ViewablePixel> getWalls() {
+        return wallViewablePixels;
     }
 
-    public Map<Coordinate, Pixel> getOuterWalls() {
-        return wallPixels;
+    public Map<Coordinate, ViewablePixel> getOuterWalls() {
+        return wallViewablePixels;
     }
 }

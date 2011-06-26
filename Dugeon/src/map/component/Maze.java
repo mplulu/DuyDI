@@ -10,8 +10,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import map.factory.Coordinate;
-import map.factory.Pixel;
+import model.Coordinate;
+import objects.ViewablePixel;
 import objects.Wall;
 import objects.Way;
 
@@ -22,30 +22,30 @@ import objects.Way;
 public class Maze implements MapComponent{
 
     private int width, height;
-    private Map<Coordinate, Pixel> pixels;
-    private Map<Coordinate, Pixel> ways;
+    private Map<Coordinate, ViewablePixel> ViewablePixels;
+    private Map<Coordinate, ViewablePixel> ways;
     private Set<Coordinate> visitedWays;
-    private Map<Coordinate, Pixel> walls;
+    private Map<Coordinate, ViewablePixel> walls;
 
     public Maze(int width, int height) {
         this.width = width;
         this.height = height;
-        pixels = new HashMap<Coordinate, Pixel>();
-        ways = new HashMap<Coordinate, Pixel>();
-        walls = new HashMap<Coordinate, Pixel>();
+        ViewablePixels = new HashMap<Coordinate, ViewablePixel>();
+        ways = new HashMap<Coordinate, ViewablePixel>();
+        walls = new HashMap<Coordinate, ViewablePixel>();
         visitedWays = new HashSet<Coordinate>();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                Pixel p;
+                ViewablePixel p;
                 if (j % 2 == 0 || i % 2 == 0) {
-                    p = new Pixel(new Coordinate(j, i), new Wall());
+                    p = new Wall(new Coordinate(j, i));
                     walls.put(new Coordinate(j, i), p);
                 } else {
-                    p = new Pixel(new Coordinate(j, i), new Way());
+                    p = new Way(new Coordinate(j, i));
                     ways.put(new Coordinate(j, i), p);
 
                 }
-                pixels.put(new Coordinate(j, i), p);
+                ViewablePixels.put(new Coordinate(j, i), p);
             }
         }
         //Coordinate c=(Coordinate)(ways.keySet().iterator().next());
@@ -94,8 +94,9 @@ public class Maze implements MapComponent{
                 if (0 <= nx && nx < width && 0 <= ny && ny < height && !visitedWays.contains(new Coordinate(nx, ny))) {
                     Coordinate wallCoordinate = new Coordinate((nx + atCoordinate.getX()) / 2, (ny + atCoordinate.getY()) / 2);
                     walls.remove(wallCoordinate);
-                    ways.put(wallCoordinate, new Pixel(wallCoordinate, new Way()));
-                    pixels.put(wallCoordinate, new Pixel(wallCoordinate, new Way()));
+
+                    ways.put(wallCoordinate, new Way(wallCoordinate));
+                    ViewablePixels.put(wallCoordinate, new Way(wallCoordinate));
                     visitedWays.add(new Coordinate(nx, ny));
                     carveWay(new Coordinate(nx, ny));
                 }
@@ -106,26 +107,30 @@ public class Maze implements MapComponent{
 
     }
 
-    public Map<Coordinate, Pixel> getPixels() {
-        return pixels;
+    public Map<Coordinate, ViewablePixel> getViewablePixels() {
+        return ViewablePixels;
     }
 
-    public Map<Coordinate, Pixel> getWalls() {
+    public Map<Coordinate, ViewablePixel> getWalls() {
 
         return walls;
     }
 
-    public Map<Coordinate, Pixel> getWays() {
+    public Map<Coordinate, ViewablePixel> getWays() {
         return ways;
     }
 
-    public Map<Coordinate, Pixel> getOuterWalls() {
-        Map<Coordinate ,Pixel> outerWalls=new HashMap<Coordinate,Pixel>();
-        for(Pixel p:walls.values()){
+    public Map<Coordinate, ViewablePixel> getOuterWalls() {
+        Map<Coordinate ,ViewablePixel> outerWalls=new HashMap<Coordinate,ViewablePixel>();
+        for(ViewablePixel p:walls.values()){
             if(p.getCoordinate().getX()==0||p.getCoordinate().getY()==0||p.getCoordinate().getX()==width-1||p.getCoordinate().getX()==height-1){
                 outerWalls.put(p.getCoordinate(), p);
             }
         }
         return outerWalls;
+    }
+
+    public Map<Coordinate, ViewablePixel> getViewablePixel() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

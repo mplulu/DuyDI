@@ -4,12 +4,14 @@
  */
 package map.factory;
 
+import model.Coordinate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import map.component.MapComponent;
+import objects.ViewablePixel;
 
 /**
  *
@@ -17,24 +19,24 @@ import map.component.MapComponent;
  */
 public class MapView {
 
-    private Map<Coordinate, Pixel> pixelsMap;
+    private Map<Coordinate, ViewablePixel> pixelsMap;
     private Collection<Coordinate> ways;
 
     public MapView(MapComponent mapComponent) {
-        this.pixelsMap = mapComponent.getPixels();
+        this.pixelsMap = mapComponent.getViewablePixels();
         this.ways = mapComponent.getWays().keySet();
     }
 
     public MapView() {
-        pixelsMap = new TreeMap<Coordinate, Pixel>();
+        pixelsMap = new TreeMap<Coordinate, ViewablePixel>();
         ways = new ArrayList<Coordinate>();
     }
 
-    public Map<Coordinate, Pixel> getPixelsMap() {
+    public Map<Coordinate, ViewablePixel> getViewablePixelsMap() {
         return pixelsMap;
     }
 
-    public void setPixelsMap(Map<Coordinate, Pixel> pixelsMap) {
+    public void setViewablePixelsMap(Map<Coordinate, ViewablePixel> pixelsMap) {
         this.pixelsMap = pixelsMap;
     }
 
@@ -47,10 +49,10 @@ public class MapView {
     }
 
     public boolean addMapComponent(MapComponent component, Coordinate coordinate) {
-        if (component.getPixels() == null) {
+        if (component.getViewablePixels() == null) {
             return false;
         }
-        for (Pixel p : component.getPixels().values()) {
+        for (ViewablePixel p : component.getViewablePixels().values()) {
             p.getCoordinate().shiftCoordinate(coordinate.getX(), coordinate.getY());
             pixelsMap.put(p.getCoordinate(), p);
         }

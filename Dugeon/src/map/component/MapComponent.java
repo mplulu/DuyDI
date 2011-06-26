@@ -6,18 +6,18 @@
 package map.component;
 
 import java.util.Map;
-import map.factory.Coordinate;
-import map.factory.Pixel;
+import model.Coordinate;
+import objects.ViewablePixel;
 
 /**
  *
  * @author hoanggia
  */
 public interface MapComponent {
-    public abstract Map<Coordinate,Pixel> getPixels();
-    public abstract Map<Coordinate,Pixel> getWays();
-    public abstract Map<Coordinate,Pixel> getWalls();
-    public abstract Map<Coordinate,Pixel> getOuterWalls();
+    public abstract Map<Coordinate,ViewablePixel> getViewablePixels();
+    public abstract Map<Coordinate,ViewablePixel> getWays();
+    public abstract Map<Coordinate,ViewablePixel> getWalls();
+    public abstract Map<Coordinate,ViewablePixel> getOuterWalls();
 
 
 

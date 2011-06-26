@@ -8,7 +8,7 @@ package resource;
 import java.util.Map;
 import java.util.TreeMap;
 import objects.Door;
-import objects.Player;
+import model.Player;
 import objects.Wall;
 import objects.Way;
 

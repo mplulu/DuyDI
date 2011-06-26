@@ -1,4 +1,4 @@
-package map.factory;
+package model;
 
 public class Coordinate implements Comparable<Coordinate>{
 
@@ -36,6 +36,11 @@ public class Coordinate implements Comparable<Coordinate>{
         this.y+=yOffset;
         this.x+=xOffset;
     }
+
+    public int distanceTo(Coordinate coordinate){
+        return (int)Math.sqrt(Math.pow((x-coordinate.getX()),2)+Math.pow((y-coordinate.getY()),2));
+    }
+
 
     @Override
     public boolean equals(Object obj) {
