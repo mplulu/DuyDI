@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import model.Constant;
 import model.Coordinate;
 import objects.ViewablePixel;
 import objects.Wall;
@@ -74,15 +75,15 @@ public class Maze implements MapComponent{
             if (directions.contains(new Integer(direction))) {
                 directions.remove(new Integer(direction));
                 switch (direction) {
-                    case 0:
+                    case Constant.NORTH:
                         nx = atCoordinate.getX();
                         ny = atCoordinate.getY() - 2;
                         break;
-                    case 1:
+                    case Constant.EAST:
                         nx = atCoordinate.getX() + 2;
                         ny = atCoordinate.getY();
                         break;
-                    case 2:
+                    case Constant.WEST:
                         nx = atCoordinate.getX() - 2;
                         ny = atCoordinate.getY();
                         break;
@@ -130,7 +131,4 @@ public class Maze implements MapComponent{
         return outerWalls;
     }
 
-    public Map<Coordinate, ViewablePixel> getViewablePixel() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

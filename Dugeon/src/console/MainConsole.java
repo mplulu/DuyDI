@@ -59,7 +59,7 @@ public class MainConsole extends JPanel implements KeyListener {
         pixels.clear();
         pixels.putAll(map.getViewablePixelsMap());
 
-        pixels.put(player.getCoordinate(), new Player(player.getCoordinate()));
+        //pixels.put(player.getCoordinate(), new Player(player.getCoordinate()));
 
 
     }

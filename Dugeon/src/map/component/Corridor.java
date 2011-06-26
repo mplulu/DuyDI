@@ -6,6 +6,7 @@ package map.component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import model.Coordinate;
 import objects.ViewablePixel;
 import objects.Wall;
@@ -17,60 +18,110 @@ import objects.Way;
  */
 public class Corridor implements MapComponent {
 
-    private Map<Coordinate,ViewablePixel> viewablePixels;
-    private Map<Coordinate,ViewablePixel> wallViewablePixels;
-    private Map<Coordinate,ViewablePixel> wayViewablePixels;
+    private Map<Coordinate, ViewablePixel> viewablePixels;
+    private Map<Coordinate, ViewablePixel> walls;
+    private Map<Coordinate, ViewablePixel> ways;
     private boolean isVectical;
+    private Coordinate from, to;
 
-    public Corridor(int length, int width, boolean isVectical) {
-        viewablePixels=new HashMap<Coordinate,ViewablePixel>();
-        wallViewablePixels=new HashMap<Coordinate,ViewablePixel>();
-        wayViewablePixels=new HashMap<Coordinate,ViewablePixel>();
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < length; j++) {
-                int x = isVectical ? i : j;
-                int y = isVectical ? j : i;
-                if (isVectical) {
-                    if(x==0||x==width-1){
-                        ViewablePixel p=new Wall(new Coordinate(x, y));
-                        viewablePixels.put(p.getCoordinate(),p);
-                        wallViewablePixels.put(p.getCoordinate(),p);
-                    }else{
-                        ViewablePixel p=new Way(new Coordinate(x, y));
-                        viewablePixels.put(p.getCoordinate(),p);
-                        wayViewablePixels.put(p.getCoordinate(),p);
-                    }
+    public Corridor(Coordinate from, Coordinate to) {
+        viewablePixels = new HashMap<Coordinate, ViewablePixel>();
+        this.from = from;
+        this.to = to;
+        generateWays();
+        generateWalls();
+    }
 
-                }else{
-                    if(y==0||y==width-1){
-                        ViewablePixel p=new Wall(new Coordinate(x, y));
-                        viewablePixels.put(p.getCoordinate(),p);
-                        wallViewablePixels.put(p.getCoordinate(),p);
-                    }else{
-                        ViewablePixel p=new Way(new Coordinate(x, y));
-                        viewablePixels.put(p.getCoordinate(),p);
-                        wayViewablePixels.put(p.getCoordinate(),p);
+    private void generateWays() {
+        int xOffset = from.getX() - to.getX();
+        int yOffset = from.getY() - to.getY();
+        ViewablePixel fromPixel = new Way(from);
+        ViewablePixel toPixel = new Way(to);
+        viewablePixels.put(from, fromPixel);
+        viewablePixels.put(to, toPixel);
 
-                    }
+        while (xOffset != 0 || yOffset != 0) {
+            Random r = new Random();
+            boolean isX = r.nextBoolean();
+            Coordinate c;
+            if (isX && xOffset != 0) {
+                xOffset -= 1 * (xOffset > 0 ? 1 : -1);
+            } else {
+                yOffset -= 1 * (yOffset > 0 ? 1 : -1);
+            }
+            c = new Coordinate(from.getX() - xOffset, from.getY() - yOffset);
+            System.out.println(c);
+            ViewablePixel p = new Way(c);
+            viewablePixels.put(c, p);
+        }
+
+
+    }
+
+    private void generateWalls() {
+        Map<Coordinate, ViewablePixel> waysNow = new HashMap<Coordinate, ViewablePixel>(getWays());
+        for (ViewablePixel p : waysNow.values()) {
+
+            if (p instanceof Way && !p.getCoordinate().equals(from) && !p.getCoordinate().equals(to)) {
+                if (!viewablePixels.containsKey(new Coordinate(p.getCoordinate().getX() + 1, p.getCoordinate().getY()))) {
+                    ViewablePixel wall = new Wall(new Coordinate(p.getCoordinate().getX() + 1, p.getCoordinate().getY()));
+                    viewablePixels.put(wall.getCoordinate(), wall);
+
+                }
+                if (!viewablePixels.containsKey(new Coordinate(p.getCoordinate().getX(), p.getCoordinate().getY() + 1))) {
+                    ViewablePixel wall = new Wall(new Coordinate(p.getCoordinate().getX() , p.getCoordinate().getY()+1));
+                    viewablePixels.put(wall.getCoordinate(), wall);
+                }
+                if (!viewablePixels.containsKey(new Coordinate(p.getCoordinate().getX() - 1, p.getCoordinate().getY()))) {
+                    ViewablePixel wall = new Wall(new Coordinate(p.getCoordinate().getX() - 1, p.getCoordinate().getY()));
+                    viewablePixels.put(wall.getCoordinate(), wall);
+                }
+                if (!viewablePixels.containsKey(new Coordinate(p.getCoordinate().getX(), p.getCoordinate().getY() - 1))) {
+                    ViewablePixel wall = new Wall(new Coordinate(p.getCoordinate().getX(), p.getCoordinate().getY()-1));
+                    viewablePixels.put(wall.getCoordinate(), wall);
                 }
 
             }
         }
     }
 
-    public Map<Coordinate,ViewablePixel> getViewablePixels() {
+    public Map<Coordinate, ViewablePixel> getViewablePixels() {
         return viewablePixels;
     }
 
     public Map<Coordinate, ViewablePixel> getWays() {
-        return wayViewablePixels;
+        if (ways == null) {
+            ways = new HashMap<Coordinate, ViewablePixel>();
+            for (ViewablePixel p : viewablePixels.values()) {
+                if (p instanceof Way) {
+                    ways.put(p.getCoordinate(), p);
+                }
+            }
+        }
+        return ways;
     }
 
     public Map<Coordinate, ViewablePixel> getWalls() {
-        return wallViewablePixels;
+        if (walls == null) {
+            walls = new HashMap<Coordinate, ViewablePixel>();
+            for (ViewablePixel p : viewablePixels.values()) {
+                if (p instanceof Wall) {
+                    walls.put(p.getCoordinate(), p);
+                }
+            }
+        }
+        return walls;
     }
 
     public Map<Coordinate, ViewablePixel> getOuterWalls() {
-        return wallViewablePixels;
+        if (walls == null) {
+            walls = new HashMap<Coordinate, ViewablePixel>();
+            for (ViewablePixel p : viewablePixels.values()) {
+                if (p instanceof Wall) {
+                    walls.put(p.getCoordinate(), p);
+                }
+            }
+        }
+        return walls;
     }
 }

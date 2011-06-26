@@ -7,6 +7,7 @@ package map.component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import model.Constant;
 import model.Coordinate;
 import objects.ViewablePixel;
 import objects.Wall;
@@ -30,23 +31,23 @@ public class Cavern implements MapComponent {
         center = new Way(new Coordinate(radius, radius));
         viewablePixels = new HashMap<Coordinate, ViewablePixel>();
         viewablePixels.put(center.getCoordinate(), center);
-        putNextViewablePixel(center, 0);
-        putNextViewablePixel(center, 1);
-        putNextViewablePixel(center, 2);
-        putNextViewablePixel(center, 3);
+        putNextViewablePixel(center, Constant.NORTH);
+        putNextViewablePixel(center, Constant.EAST);
+        putNextViewablePixel(center, Constant.WEST);
+        putNextViewablePixel(center, Constant.SOUTH);
     }
 
     private void putNextViewablePixel(ViewablePixel lastPixel, int direction) {
 
         Coordinate c;
         switch (direction) {
-            case 0:
+            case Constant.NORTH:
                 c = new Coordinate(lastPixel.getCoordinate().getX() + 1, lastPixel.getCoordinate().getY());
                 break;
-            case 1:
+            case Constant.EAST:
                 c = new Coordinate(lastPixel.getCoordinate().getX(), lastPixel.getCoordinate().getY() + 1);
                 break;
-            case 2:
+            case Constant.WEST:
                 c = new Coordinate(lastPixel.getCoordinate().getX() - 1, lastPixel.getCoordinate().getY());
                 break;
             default:
@@ -61,10 +62,10 @@ public class Cavern implements MapComponent {
             if (isWay) {
                 p = new Way(c);
                 viewablePixels.put(c, p);
-                putNextViewablePixel(p, 0);
-                putNextViewablePixel(p, 1);
-                putNextViewablePixel(p, 2);
-                putNextViewablePixel(p, 3);
+                putNextViewablePixel(p, Constant.NORTH);
+                putNextViewablePixel(p, Constant.EAST);
+                putNextViewablePixel(p, Constant.WEST);
+                putNextViewablePixel(p, Constant.SOUTH);
             } else {
                 p = new Wall(c);
                 viewablePixels.put(c, p);
