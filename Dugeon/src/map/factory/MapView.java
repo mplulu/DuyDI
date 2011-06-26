@@ -48,7 +48,7 @@ public class MapView {
         this.ways = ways;
     }
 
-    public boolean addMapComponent(MapComponent component, Coordinate coordinate) {
+    private boolean addMapComponent(MapComponent component, Coordinate coordinate) {
         if (component.getViewablePixels() == null) {
             return false;
         }

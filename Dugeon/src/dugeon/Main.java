@@ -8,8 +8,9 @@ import map.factory.MapView;
 import console.MainConsole;
 import javax.swing.JFrame;
 //import map.component.Cavern;
-import map.component.Cavern;
 import map.component.MapComponent;
+import map.component.OvalRoom;
+import map.component.RectangleRoom;
 import model.Player;
 
 public class Main {
@@ -17,7 +18,7 @@ public class Main {
     public static void main(String[] args) {
         //MapView map = generateMap();
         //MapComponent mapComponent=new Maze(21,21);
-        MapComponent mapComponent=new Cavern(21);
+        MapComponent mapComponent=new RectangleRoom(11,15);
         MapView map=new MapView(mapComponent);
         //map.addMapComponent(new Cavern(15,15),new Coordinate(30,5));
         //map.addMapComponent(new Corridor(13, 3, false), new Coordinate(20,10));
