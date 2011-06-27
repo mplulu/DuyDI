@@ -40,7 +40,7 @@ public class MapGenerator {
 
     public Map<Coordinate, ViewablePixel> generateMap() {
         Random r = new Random();
-        int numberOfComponent = r.nextInt(5);
+        int numberOfComponent = r.nextInt(5)+1;
         for (int i = 0; i < numberOfComponent; i++) {
             MapComponent component = getRandomMapComponent();
             System.out.println(component.getClass().getName());
