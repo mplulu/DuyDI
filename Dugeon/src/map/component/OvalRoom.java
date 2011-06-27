@@ -84,26 +84,26 @@ public class OvalRoom implements MapComponent {
     }
 
     public Map<Coordinate, ViewablePixel> getWalls() {
-        if (walls == null) {
-            walls = new HashMap<Coordinate, ViewablePixel>();
-            for (ViewablePixel p : viewablePixels.values()) {
-                if (p instanceof Wall) {
-                    walls.put(p.getCoordinate(), p);
-                }
+
+        walls = new HashMap<Coordinate, ViewablePixel>();
+        for (ViewablePixel p : viewablePixels.values()) {
+            if (p instanceof Wall) {
+                walls.put(p.getCoordinate(), p);
             }
         }
+
         return walls;
     }
 
     public Map<Coordinate, ViewablePixel> getOuterWalls() {
-        if (walls == null) {
-            walls = new HashMap<Coordinate, ViewablePixel>();
-            for (ViewablePixel p : viewablePixels.values()) {
-                if (p instanceof Wall) {
-                    walls.put(p.getCoordinate(), p);
-                }
+
+        walls = new HashMap<Coordinate, ViewablePixel>();
+        for (ViewablePixel p : viewablePixels.values()) {
+            if (p instanceof Wall) {
+                walls.put(p.getCoordinate(), p);
             }
         }
+
         return walls;
     }
 }

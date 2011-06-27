@@ -27,7 +27,9 @@ import objects.Way;
  */
 public class MapGenerator {
 
-    private static final int maxSideOfComponent = 42;
+    private static final int MAX_SIDE_OF_COMPONENT = 52;
+    private static final int MIN_SIDE_OF_COMPONENT = 7;
+    private static final int MAX_DISTANCE_BETWEEN_MAP_COMPONENT = 5;
     private Map<Coordinate, ViewablePixel> pixelsMap;
     private List<MapComponent> mapComponents;
 
@@ -39,21 +41,20 @@ public class MapGenerator {
     public Map<Coordinate, ViewablePixel> generateMap() {
         Random r = new Random();
         int numberOfComponent = r.nextInt(5);
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < numberOfComponent; i++) {
             MapComponent component = getRandomMapComponent();
             System.out.println(component.getClass().getName());
-            Coordinate c = new Coordinate(maxSideOfComponent * i + r.nextInt(41), maxSideOfComponent * i + r.nextInt(41));
+            Coordinate c;
             if (i != 0) {
-
-                Map<Coordinate, ViewablePixel> oldOuterWall = new HashMap<Coordinate, ViewablePixel>(getOuterWalls());
-                Map<Coordinate, ViewablePixel> componentOuterWall = new HashMap<Coordinate, ViewablePixel>(component.getOuterWalls());
-
-
+                System.out.println(component.getViewablePixels().keySet());
+                c = generateRandomCoordinateNextToComponent(mapComponents.get(i-1));
                 shiftAllCoordinateTo(component, c);
+                System.out.println(component.getViewablePixels().keySet());
+                System.out.println(pixelsMap.keySet());
 
-                Coordinate[] points = getNearestPoints(oldOuterWall, componentOuterWall);
+                Coordinate[] points = getNearestWayPoints(pixelsMap, component.getViewablePixels());
                 MapComponent corridor = new Corridor(points[0], points[1]);
-
+                System.out.println(points[0]+" " +points[1]);
                 pixelsMap.putAll(component.getViewablePixels());
                 pixelsMap.putAll(corridor.getViewablePixels());
 
@@ -61,13 +62,37 @@ public class MapGenerator {
             } else {
                 pixelsMap.putAll(component.getViewablePixels());
 
-
             }
+            mapComponents.add(component);
+
 
         }
         //generateWalls();
-
         return pixelsMap;
+    }
+
+    private Coordinate generateRandomCoordinateNextToComponent(MapComponent component) {
+        Random r = new Random();
+        Coordinate maxCoordinate = getMaxCoordinateOfMapComponent(component);
+        Coordinate minCoordinate = getMinCoordinateOfMapComponent(component);
+        Coordinate c;
+        switch (r.nextInt(3)) {
+            case 0:
+                c = new Coordinate(maxCoordinate.getX() + r.nextInt(MAX_DISTANCE_BETWEEN_MAP_COMPONENT) + 2, minCoordinate.getY());
+                System.out.println("0");
+                break;
+            case 1:
+                c = new Coordinate(minCoordinate.getX(), maxCoordinate.getY() + r.nextInt(MAX_DISTANCE_BETWEEN_MAP_COMPONENT) + 2);
+                System.out.println("1");
+                break;
+            default:
+                c = new Coordinate(maxCoordinate.getX() + r.nextInt(MAX_DISTANCE_BETWEEN_MAP_COMPONENT) + 2, maxCoordinate.getY() + r.nextInt(MAX_DISTANCE_BETWEEN_MAP_COMPONENT) + 2);
+                System.out.println("2");
+                break;
+
+        }
+        System.out.println("random coordinate " + c);
+        return c;
     }
 
     private boolean isOverlap(Map<Coordinate, ViewablePixel> componetA, Map<Coordinate, ViewablePixel> componetB) {
@@ -81,19 +106,30 @@ public class MapGenerator {
         return false;
     }
 
-    private Coordinate[] getNearestPoints(Map<Coordinate, ViewablePixel> componetA, Map<Coordinate, ViewablePixel> componetB) {
+    private Coordinate[] getNearestWayPoints(Map<Coordinate, ViewablePixel> componentA, Map<Coordinate, ViewablePixel> componentB) {
         int minDistance = Integer.MAX_VALUE;
-        Coordinate[] points = new Coordinate[2];
-        for (Coordinate cA : componetA.keySet()) {
-            for (Coordinate cB : componetB.keySet()) {
-                if (minDistance > cA.distanceTo(cB)) {
+        List<Coordinate[]> l = new ArrayList<Coordinate[]>();
+        for (Coordinate cA : componentA.keySet()) {
+            for (Coordinate cB : componentB.keySet()) {
+                if (componentA.get(cA) instanceof Way && componentB.get(cB) instanceof Way && minDistance > cA.distanceTo(cB)) {
                     minDistance = cA.distanceTo(cB);
+                    Coordinate[] points = new Coordinate[2];
                     points[0] = cA;
                     points[1] = cB;
+                    l.clear();
+                    l.add(points);
+
+                } else if (componentA.get(cA) instanceof Way && componentB.get(cB) instanceof Way && minDistance == cA.distanceTo(cB)) {
+                    Coordinate[] points = new Coordinate[2];
+                    points[0] = cA;
+                    points[1] = cB;
+                    l.add(points);
                 }
             }
         }
-        return points;
+        Random r=new Random();
+
+        return l.get(r.nextInt(l.size()));
     }
 
     private void generateWalls() {
@@ -123,12 +159,40 @@ public class MapGenerator {
         }
     }
 
+    private Coordinate getMaxCoordinateOfMapComponent(MapComponent component) {
+        int maxX = 0;
+        int maxY = 0;
+        for (Coordinate c : component.getViewablePixels().keySet()) {
+            if (c.getX() > maxX) {
+                maxX = c.getX();
+            }
+            if (c.getY() > maxY) {
+                maxY = c.getY();
+            }
+        }
+        return new Coordinate(maxX, maxY);
+    }
+
+    private Coordinate getMinCoordinateOfMapComponent(MapComponent component) {
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        for (Coordinate c : component.getViewablePixels().keySet()) {
+            if (c.getX() < minX) {
+                minX = c.getX();
+            }
+            if (c.getY() < minY) {
+                minY = c.getY();
+            }
+        }
+        return new Coordinate(minX, minY);
+    }
+
     private MapComponent getRandomMapComponent() {
         Random r = new Random();
         int randomIntForType = r.nextInt(4);
-        int randomIntForRadius = limitRangeForValue(maxSideOfComponent / 2, 11, r.nextInt());
-        int randomIntForWidth = limitRangeForValue(maxSideOfComponent, 11, r.nextInt());
-        int randomIntForHeight = limitRangeForValue(maxSideOfComponent, 11, r.nextInt());
+        int randomIntForRadius = limitRangeForValue(MAX_SIDE_OF_COMPONENT / 2, MIN_SIDE_OF_COMPONENT, r.nextInt());
+        int randomIntForWidth = limitRangeForValue(MAX_SIDE_OF_COMPONENT, MIN_SIDE_OF_COMPONENT, r.nextInt());
+        int randomIntForHeight = limitRangeForValue(MAX_SIDE_OF_COMPONENT, MIN_SIDE_OF_COMPONENT, r.nextInt());
         MapComponent component;
         switch (randomIntForType) {
             case 0:
@@ -142,6 +206,7 @@ public class MapGenerator {
                 break;
             default:
                 component = new RectangleRoom(randomIntForWidth, randomIntForHeight);
+
                 break;
         }
         return component;
@@ -195,8 +260,13 @@ public class MapGenerator {
     }
 
     private void shiftAllCoordinateTo(MapComponent component, Coordinate coordinate) {
+        Map<Coordinate,ViewablePixel> newViewablePixels=new HashMap<Coordinate, ViewablePixel>();
         for (ViewablePixel p : component.getViewablePixels().values()) {
             p.getCoordinate().shiftCoordinate(coordinate.getX(), coordinate.getY());
+            newViewablePixels.put(p.getCoordinate(), p);
         }
+        component.getViewablePixels().clear();
+        component.getViewablePixels().putAll(newViewablePixels);
+
     }
 }

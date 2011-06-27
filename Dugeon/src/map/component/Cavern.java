@@ -4,6 +4,7 @@
  */
 package map.component;
 
+import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -19,6 +20,7 @@ import objects.Way;
  */
 public class Cavern implements MapComponent {
 
+    private static final int offsetToCreateWall = 5;
     private Map<Coordinate, ViewablePixel> viewablePixels;
     private Map<Coordinate, ViewablePixel> ways;
     private Map<Coordinate, ViewablePixel> walls;
@@ -54,10 +56,13 @@ public class Cavern implements MapComponent {
                 c = new Coordinate(lastPixel.getCoordinate().getX(), lastPixel.getCoordinate().getY() - 1);
                 break;
         }
-        if (!viewablePixels.containsKey(c) && c.getX() >= 0 && c.getX() < radius * 2 && c.getY() < radius * 2 && c.getY() >= 0) {
+        if (!viewablePixels.containsKey(c) && c.getX() >= 0 && c.getX() <= radius * 2 && c.getY() <= radius * 2 && c.getY() >= 0) {
             //System.out.println("a");
             Random r = new Random();
-            boolean isWay = r.nextInt(radius - 1) > lastPixel.getCoordinate().distanceTo(center.getCoordinate()) - 3;
+            boolean isWay = r.nextInt(radius) > c.distanceTo(center.getCoordinate()) - offsetToCreateWall;
+            if (c.distanceTo(center.getCoordinate()) == radius) {
+                isWay = false;
+            }
             ViewablePixel p;
             if (isWay) {
                 p = new Way(c);
@@ -79,43 +84,51 @@ public class Cavern implements MapComponent {
     }
 
     public Map<Coordinate, ViewablePixel> getWays() {
-        if (ways == null) {
-            ways = new HashMap<Coordinate, ViewablePixel>();
-            for (ViewablePixel p : viewablePixels.values()) {
-                if (p instanceof Way) {
-                    ways.put(p.getCoordinate(), p);
-                }
+        ways = new HashMap<Coordinate, ViewablePixel>();
+        for (ViewablePixel p : viewablePixels.values()) {
+            if (p instanceof Way) {
+                ways.put(p.getCoordinate(), p);
             }
         }
+
         return ways;
     }
 
     public Map<Coordinate, ViewablePixel> getWalls() {
-        if (walls == null) {
-            walls = new HashMap<Coordinate, ViewablePixel>();
-            for (ViewablePixel p : viewablePixels.values()) {
-                if (p instanceof Wall) {
-                    walls.put(p.getCoordinate(), p);
-                }
+        walls = new HashMap<Coordinate, ViewablePixel>();
+        for (ViewablePixel p : viewablePixels.values()) {
+            if (p instanceof Wall) {
+                walls.put(p.getCoordinate(), p);
             }
         }
+
         return walls;
     }
 
     public Map<Coordinate, ViewablePixel> getOuterWalls() {
-        if (outerWalls == null) {
-            outerWalls = new HashMap<Coordinate, ViewablePixel>();
 
-            for (ViewablePixel p : getWalls().values()) {
-                Coordinate n = new Coordinate(p.getCoordinate().getX(), p.getCoordinate().getY() - 1);
-                Coordinate e = new Coordinate(p.getCoordinate().getX() + 1, p.getCoordinate().getY());
-                Coordinate w = new Coordinate(p.getCoordinate().getX() - 1, p.getCoordinate().getY());
-                Coordinate s = new Coordinate(p.getCoordinate().getX(), p.getCoordinate().getY() + 1);
-                if (!viewablePixels.containsKey(n) || !viewablePixels.containsKey(e) || !viewablePixels.containsKey(w) || !viewablePixels.containsKey(s)) {
-                    outerWalls.put(p.getCoordinate(), p);
-                }
+        outerWalls = new HashMap<Coordinate, ViewablePixel>();
+
+        for (ViewablePixel p : getWalls().values()) {
+            Coordinate n = new Coordinate(p.getCoordinate().getX(), p.getCoordinate().getY() - 1);
+            Coordinate e = new Coordinate(p.getCoordinate().getX() + 1, p.getCoordinate().getY());
+            Coordinate w = new Coordinate(p.getCoordinate().getX() - 1, p.getCoordinate().getY());
+            Coordinate s = new Coordinate(p.getCoordinate().getX(), p.getCoordinate().getY() + 1);
+            if (!viewablePixels.containsKey(n) || !viewablePixels.containsKey(e) || !viewablePixels.containsKey(w) || !viewablePixels.containsKey(s)) {
+                outerWalls.put(p.getCoordinate(), p);
             }
         }
+
         return outerWalls;
+    }
+
+    private int limitRangeForValue(int max, int min, int value) {
+        if (max < value) {
+            return max;
+        }
+        if (min > value) {
+            return min;
+        }
+        return value;
     }
 }

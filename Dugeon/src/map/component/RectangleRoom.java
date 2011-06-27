@@ -74,14 +74,14 @@ public class RectangleRoom implements MapComponent {
     }
 
     public Map<Coordinate, ViewablePixel> getOuterWalls() {
-        if (walls == null) {
+        
             walls = new HashMap<Coordinate, ViewablePixel>();
             for (ViewablePixel p : viewablePixels.values()) {
                 if (p instanceof Wall) {
                     walls.put(p.getCoordinate(), p);
                 }
             }
-        }
+        
         return walls;
     }
 }

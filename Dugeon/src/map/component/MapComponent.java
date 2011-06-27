@@ -5,6 +5,7 @@
 
 package map.component;
 
+import java.awt.geom.Rectangle2D;
 import java.util.Map;
 import model.Coordinate;
 import objects.ViewablePixel;

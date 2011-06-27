@@ -7,6 +7,8 @@ package dugeon;
 import map.factory.MapView;
 import console.MainConsole;
 import java.awt.Dimension;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JFrame;
 //import map.component.Cavern;
 import javax.swing.JScrollPane;
@@ -18,11 +20,15 @@ import model.Player;
 public class Main {
 
     public static void main(String[] args) {
+        
         //MapView map = generateMap();
-        MapComponent mapComponent=new Cavern(21);
+        //MapComponent mapComponent=new Cavern(21);
         //MapComponent mapComponent=new Corridor(new Coordinate(10, 8), new Coordinate(1, 0));
         MapGenerator ge=new MapGenerator();
         MapView map=new MapView(ge.generateMap());
+        //MapView map=new MapView(new RectangleRoom(21,50));
+        //MapView map=new MapView(new OvalRoom(7));
+        //MapView map=new MapView(new Maze(20,50))
         //map.addMapComponent(new Cavern(15,15),new Coordinate(30,5));
         //map.addMapComponent(new Corridor(13, 3, false), new Coordinate(20,10));
         Player player = new Player(map.getWays().iterator().next());
