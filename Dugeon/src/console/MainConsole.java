@@ -41,7 +41,7 @@ public class MainConsole extends JPanel implements KeyListener {
     public MainConsole() {
         addKeyListener(this);
         setFocusable(true);
-        setPreferredSize(new Dimension(600, 600));
+        setPreferredSize(new Dimension(9600,9600));
 
     }
 
@@ -94,7 +94,6 @@ public class MainConsole extends JPanel implements KeyListener {
                 String s = "" + re.getCharFor(i.getClass().getName());
                 if (c.equals(cp)) {
 
-                    System.out.println(s);
                 }
                 g.setColor(i.getColor());
                 g.drawString(s, x, y);

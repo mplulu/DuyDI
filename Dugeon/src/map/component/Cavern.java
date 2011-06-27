@@ -105,7 +105,8 @@ public class Cavern implements MapComponent {
     public Map<Coordinate, ViewablePixel> getOuterWalls() {
         if (outerWalls == null) {
             outerWalls = new HashMap<Coordinate, ViewablePixel>();
-            for (ViewablePixel p : walls.values()) {
+
+            for (ViewablePixel p : getWalls().values()) {
                 Coordinate n = new Coordinate(p.getCoordinate().getX(), p.getCoordinate().getY() - 1);
                 Coordinate e = new Coordinate(p.getCoordinate().getX() + 1, p.getCoordinate().getY());
                 Coordinate w = new Coordinate(p.getCoordinate().getX() - 1, p.getCoordinate().getY());

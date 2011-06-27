@@ -7,11 +7,13 @@ package map.factory;
 import model.Coordinate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import map.component.MapComponent;
 import objects.ViewablePixel;
+import objects.Way;
 
 /**
  *
@@ -25,6 +27,16 @@ public class MapView {
     public MapView(MapComponent mapComponent) {
         this.pixelsMap = mapComponent.getViewablePixels();
         this.ways = mapComponent.getWays().keySet();
+    }
+
+    public MapView(Map<Coordinate, ViewablePixel> pixelsMap) {
+        this.pixelsMap = pixelsMap;
+        ways = new ArrayList<Coordinate>();
+        for (ViewablePixel p : pixelsMap.values()) {
+            if (p instanceof Way) {
+                ways.add(p.getCoordinate());
+            }
+        }
     }
 
     public MapView() {

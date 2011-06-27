@@ -50,7 +50,6 @@ public class Corridor implements MapComponent {
                 yOffset -= 1 * (yOffset > 0 ? 1 : -1);
             }
             c = new Coordinate(from.getX() - xOffset, from.getY() - yOffset);
-            System.out.println(c);
             ViewablePixel p = new Way(c);
             viewablePixels.put(c, p);
         }

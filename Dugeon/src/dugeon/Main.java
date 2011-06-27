@@ -6,10 +6,13 @@ package dugeon;
 
 import map.factory.MapView;
 import console.MainConsole;
+import java.awt.Dimension;
 import javax.swing.JFrame;
 //import map.component.Cavern;
+import javax.swing.JScrollPane;
 import map.component.Cavern;
 import map.component.MapComponent;
+import map.factory.MapGenerator;
 import model.Player;
 
 public class Main {
@@ -18,16 +21,17 @@ public class Main {
         //MapView map = generateMap();
         MapComponent mapComponent=new Cavern(21);
         //MapComponent mapComponent=new Corridor(new Coordinate(10, 8), new Coordinate(1, 0));
-        MapView map=new MapView(mapComponent);
+        MapGenerator ge=new MapGenerator();
+        MapView map=new MapView(ge.generateMap());
         //map.addMapComponent(new Cavern(15,15),new Coordinate(30,5));
         //map.addMapComponent(new Corridor(13, 3, false), new Coordinate(20,10));
         Player player = new Player(map.getWays().iterator().next());
 
         JFrame frame = new JFrame();
         MainConsole console = new MainConsole(map, player);
-
-        frame.add(console);
-        frame.pack();
+        JScrollPane scrollPane = new JScrollPane(console);
+        frame.add(scrollPane);
+        frame.setSize(new Dimension(700, 700));
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

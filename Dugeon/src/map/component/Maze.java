@@ -29,8 +29,8 @@ public class Maze implements MapComponent{
     private Map<Coordinate, ViewablePixel> walls;
 
     public Maze(int width, int height) {
-        this.width = width;
-        this.height = height;
+        this.width = width%2==0?width+1:width;
+        this.height = height%2==0?height+1:height;
         ViewablePixels = new HashMap<Coordinate, ViewablePixel>();
         ways = new HashMap<Coordinate, ViewablePixel>();
         walls = new HashMap<Coordinate, ViewablePixel>();
@@ -49,8 +49,8 @@ public class Maze implements MapComponent{
                 ViewablePixels.put(new Coordinate(j, i), p);
             }
         }
-        //Coordinate c=(Coordinate)(ways.keySet().iterator().next());
-        carveWay(new Coordinate(11, 11));
+        Coordinate c=(Coordinate)(ways.keySet().iterator().next());
+        
 
 
     }
